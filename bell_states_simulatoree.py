@@ -1,4 +1,4 @@
-i# NumPy is used for arrays, complex numbers, matrix operations, and probabilities.
+# NumPy is used for arrays, complex numbers, matrix operations, and probabilities.
 import numpy as np
 
 # Matplotlib is used to draw graphs comparing theoretical and simulated results.
@@ -79,8 +79,8 @@ def display_amplitude(amplitude):
     return f"{real:.4f}{sign}{abs(imag):.4f}j"
 
 
-# Display the quantum state.
-def display_quantum_state(name, state):
+# Display the quantum state. This function displays the information about a selected quantum state.
+def display_quantum_state(name, state):   #It takes two arguments:name and sate
 
     print(f"\nSelected State: {name}")
 
@@ -107,9 +107,9 @@ def display_quantum_state(name, state):
 
 
 # Calculate theoretical measurement probabilities.
-def calculate_probabilities(state, show=True):
+def calculate_probabilities(state, show=True):     #show=True: Controls whether the calculated probabilities should be printed on the screen.
 
-    state = np.asarray(state, dtype=complex)
+    state = np.asarray(state, dtype=complex)    # It's mainly a precaution to make the function reusable.
 
     if state.shape != (4,):
         raise ValueError(
@@ -130,7 +130,7 @@ def calculate_probabilities(state, show=True):
     # Born rule: probability = squared magnitude of the amplitude.
     probabilities = np.abs(state) ** 2
     total = float(np.sum(probabilities))   # This is for rounding errors
-    #I dont understand the events where their will be a value error
+    
     if (
         not np.all(np.isfinite(probabilities))
         or np.any(probabilities < 0)
@@ -157,7 +157,7 @@ def calculate_probabilities(state, show=True):
 def perform_measurement_shots(probabilities, shots):
 
     if (
-        isinstance(shots, bool)# prevents boolean values suh as true to accepeted as integers
+        isinstance(shots, bool)# prevents boolean values suh as true to accepeted as integers. Python treats Boolean values as a special type of integer, so without this check, True could be accepted as 1 and False as 0.
         or not isinstance(shots, (int, np.integer))
         or shots <= 0
     ):
@@ -192,7 +192,7 @@ def perform_measurement_shots(probabilities, shots):
         OUTCOMES,
         size=shots,
         p=probabilities
-    )
+    )     #randomly selects values from a given collection.
 
     counts = {}
     percentages = {}
@@ -324,7 +324,7 @@ def handle_measurement(name, state):
 # Recognize whether a state matches one of the four Bell states.
 def recognize_bell_state(state, bell_states):
 
-    state = np.asarray(state, dtype=complex)
+    state = np.asarray(state, dtype=complex)  #This ensures that the input is a NumPy array with a complex data type
 
     if state.shape != (4,) or not np.all(np.isfinite(state)):
         return None
@@ -332,18 +332,12 @@ def recognize_bell_state(state, bell_states):
     if not np.isclose(np.linalg.norm(state), 1.0, atol=1e-8):
         return None
 
-    for name, bell_state in bell_states.values(): # loop goes through the stored bell states taking their names and state vectors so the current state can be compared with each n
+    for name, bell_state in bell_states.values():
 
-        overlap = np.vdot(bell_state, state)# calculates the inner product between stored bell state and input state
+        overlap = np.vdot(bell_state, state)
 
-        if np.isclose(abs(overlap), 1.0, atol=1e-8):
-
-            phase = overlap / abs(overlap)
-
-            if np.allclose(
-                state, phase * bell_state, atol=1e-8
-            ):
-                return name
+        if np.isclose(overlap, 1.0, atol=1e-8):
+            return name
 
     return None
 
@@ -352,7 +346,7 @@ def recognize_bell_state(state, bell_states):
 def circuit_builder(bell_states):
 
     # Start with |00>.
-    state = initial_state.copy()
+    state = initial_state.copy()            #Using .copy() ensures that modifications to state do not accidentally modify the original initial_state array.
 
     while True:
 
@@ -510,5 +504,5 @@ def main():
             )
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # "Run the main function only if this Python file is being executed directly."
     main()
